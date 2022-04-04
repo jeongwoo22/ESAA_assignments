@@ -1,0 +1,1183 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "사이킷런.ipynb",
+      "provenance": [],
+      "collapsed_sections": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/jeongwoo22/ESAA_assignments/blob/main/%EC%82%AC%EC%9D%B4%ED%82%B7%EB%9F%B0.ipynb_%EC%95%88%EC%A0%95%EC%9A%B0\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "7iaTeZje-TSJ"
+      },
+      "source": [
+        "1. scikit-learn 으로부터 의사결정나무 모듈을 불러오는 코드를 아래에 작성하세요."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "X1aSVTPc91JA"
+      },
+      "source": [
+        "from sklearn.tree import DecisionTreeClassifier"
+      ],
+      "execution_count": 56,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "FMaKM19W-hsG"
+      },
+      "source": [
+        "# 셀을 실행할 때 팝업이 뜨면 `무시하고 계속하기` 를 눌러주세요\n",
+        "## 데이터 다운로드\n",
+        "--- \n",
+        "아래 셀을 실행시켜 데이터를 colab에 불러옵니다.  \n",
+        "셀 실행은 Ctrl + Enter 를 이용해 실행 시킬 수 있습니다. "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "BRr7uRtG-0H-",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "ab092a3e-4f69-4c7d-e696-8909b493b4f4"
+      },
+      "source": [
+        "# 데이터 다운로드 링크로 데이터를 코랩에 불러옵니다.\n",
+        "\n",
+        "!wget 'https://bit.ly/3gLj0Q6'\n",
+        "\n",
+        "import zipfile\n",
+        "with zipfile.ZipFile('3gLj0Q6', 'r') as existing_zip:\n",
+        "    existing_zip.extractall('data')"
+      ],
+      "execution_count": 57,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "--2022-04-04 10:21:07--  https://bit.ly/3gLj0Q6\n",
+            "Resolving bit.ly (bit.ly)... 67.199.248.11, 67.199.248.10\n",
+            "Connecting to bit.ly (bit.ly)|67.199.248.11|:443... connected.\n",
+            "HTTP request sent, awaiting response... 301 Moved Permanently\n",
+            "Location: https://drive.google.com/uc?export=download&id=1or_QN1ksv81DNog6Tu_kWcZ5jJWf5W9E [following]\n",
+            "--2022-04-04 10:21:08--  https://drive.google.com/uc?export=download&id=1or_QN1ksv81DNog6Tu_kWcZ5jJWf5W9E\n",
+            "Resolving drive.google.com (drive.google.com)... 172.217.214.100, 172.217.214.102, 172.217.214.101, ...\n",
+            "Connecting to drive.google.com (drive.google.com)|172.217.214.100|:443... connected.\n",
+            "HTTP request sent, awaiting response... 303 See Other\n",
+            "Location: https://doc-0c-10-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/vev6biso9ghm2j8lvis58m469g9hktho/1649067600000/17946651057176172524/*/1or_QN1ksv81DNog6Tu_kWcZ5jJWf5W9E?e=download [following]\n",
+            "Warning: wildcards not supported in HTTP.\n",
+            "--2022-04-04 10:21:08--  https://doc-0c-10-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/vev6biso9ghm2j8lvis58m469g9hktho/1649067600000/17946651057176172524/*/1or_QN1ksv81DNog6Tu_kWcZ5jJWf5W9E?e=download\n",
+            "Resolving doc-0c-10-docs.googleusercontent.com (doc-0c-10-docs.googleusercontent.com)... 142.250.125.132, 2607:f8b0:4001:c2f::84\n",
+            "Connecting to doc-0c-10-docs.googleusercontent.com (doc-0c-10-docs.googleusercontent.com)|142.250.125.132|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 39208 (38K) [application/zip]\n",
+            "Saving to: ‘3gLj0Q6.2’\n",
+            "\n",
+            "3gLj0Q6.2           100%[===================>]  38.29K  --.-KB/s    in 0.001s  \n",
+            "\n",
+            "2022-04-04 10:21:08 (71.7 MB/s) - ‘3gLj0Q6.2’ saved [39208/39208]\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ESCvCqF2_QVP"
+      },
+      "source": [
+        "## 라이브러리 불러오기\n",
+        "---\n",
+        "아래 셀을 실행시켜 pandas 와 DecisionTreeClassifier 를 불러옵니다."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gJv1rVvp-6jE"
+      },
+      "source": [
+        "import pandas as pd\n",
+        "from sklearn.tree import DecisionTreeClassifier"
+      ],
+      "execution_count": 58,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "0oob8F8j_blt"
+      },
+      "source": [
+        "## 데이터 불러오기\n",
+        "---\n",
+        "아래 셀을 실행시켜 csv 파일 데이터를 DataFrame 객체로 불러옵니다."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "J-WSiPon_XON"
+      },
+      "source": [
+        "train = pd.read_csv('data/train.csv') \n",
+        "test = pd.read_csv('data/test.csv')"
+      ],
+      "execution_count": 59,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "gajgMdGa_h4y"
+      },
+      "source": [
+        "## 결측치 제거하기\n",
+        "---\n",
+        "결측치를 제거하고, 결측치가 모두 제거됐는지 확인합니다."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-CfkGjDP_fmW",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "a03492b9-0c17-4a47-ee1b-7faeabce052b"
+      },
+      "source": [
+        "test = test.dropna()\n",
+        "train = train.dropna()\n",
+        "\n",
+        "print(train.isnull().sum())"
+      ],
+      "execution_count": 60,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "id                        0\n",
+            "hour                      0\n",
+            "hour_bef_temperature      0\n",
+            "hour_bef_precipitation    0\n",
+            "hour_bef_windspeed        0\n",
+            "hour_bef_humidity         0\n",
+            "hour_bef_visibility       0\n",
+            "hour_bef_ozone            0\n",
+            "hour_bef_pm10             0\n",
+            "hour_bef_pm2.5            0\n",
+            "count                     0\n",
+            "dtype: int64\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "VLshlruu_nVc"
+      },
+      "source": [
+        "2. train 데이터중 <br>\n",
+        "예측해야할 `count` 피쳐를 drop()함수를 사용하고, axis=1 옵션을 사용해 해당 열을 제외한 데이터들을 `X_train` 이라는 이름의 DataFrame 객체로 만들고 <br>\n",
+        "`count` 피쳐만을 데이터로 갖는 `Y_train` 이라는 이름의 DataFrame 객체로 만드는 코드를 아래에 작성하세요"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "PjGhMNVN_lGk",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "a4b3f3a2-aeaa-4804-d6d6-55708e41e598"
+      },
+      "source": [
+        "X_train = train.drop(['count'], axis = 1)\n",
+        "X_train \n",
+        "Y_train = train['count']\n",
+        "Y_train"
+      ],
+      "execution_count": 62,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0        49.0\n",
+              "1       159.0\n",
+              "2        26.0\n",
+              "3        57.0\n",
+              "4       431.0\n",
+              "        ...  \n",
+              "1454     21.0\n",
+              "1455     20.0\n",
+              "1456     22.0\n",
+              "1457    216.0\n",
+              "1458    170.0\n",
+              "Name: count, Length: 1328, dtype: float64"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 62
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "OsFe-Y1Y_v-l"
+      },
+      "source": [
+        "3. `model` 변수명으로 모델을 선언하고, fit() 함수를 사용해서, `X_train` 을 input 으로 삼고, `Y_train` 을 output 으로 삼아 모델을 훈련시키는 코드를 아래에 작성하세요"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jp8XHSAg_xx6",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "6f9cec2f-86a0-47f4-bcbe-c091b007c423"
+      },
+      "source": [
+        "model=DecisionTreeClassifier(random_state=156)\n",
+        "\n",
+        "model.fit(X_train, Y_train)"
+      ],
+      "execution_count": 63,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "DecisionTreeClassifier(random_state=156)"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 63
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "U5-_yNUsAKRa"
+      },
+      "source": [
+        "4. predict() 를 이용해 test data 를 훈련된 모델로 예측한 data 를 생성하고 예측결과 상위 5개를 출력하는 코드를 작성하세요."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "bfmw8qg6BJ2Z",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "0e3b44ab-6d08-4761-a4bc-34f6a3b4268d"
+      },
+      "source": [
+        "pred = model.predict(test)\n",
+        "pred[:5]"
+      ],
+      "execution_count": 64,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([117., 229.,  38.,  18.,  52.])"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 64
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "omEBVUkgJC13"
+      },
+      "source": [
+        "## 데이터 다운로드 2\n",
+        "---\n",
+        "아래 셀을 실행시켜 데이터를 colab 에 불러옵니다.\n",
+        "셀 실행은 Ctrl + Enter 를 이용해 실행시킬 수 있습니다."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "si-MIrT1JNBt",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "dc73e1dc-ab5b-499b-ae83-ea057b7a7e75"
+      },
+      "source": [
+        "# 데이터 다운로드 링크로 데이터를 코랩에 불러옵니다.\n",
+        "\n",
+        "!wget 'https://bit.ly/3i4n1QB'\n",
+        "\n",
+        "import zipfile\n",
+        "with zipfile.ZipFile('3i4n1QB', 'r') as existing_zip:\n",
+        "    existing_zip.extractall('data')"
+      ],
+      "execution_count": 65,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "--2022-04-04 10:22:22--  https://bit.ly/3i4n1QB\n",
+            "Resolving bit.ly (bit.ly)... 67.199.248.10, 67.199.248.11\n",
+            "Connecting to bit.ly (bit.ly)|67.199.248.10|:443... connected.\n",
+            "HTTP request sent, awaiting response... 301 Moved Permanently\n",
+            "Location: https://drive.google.com/uc?export=download&id=1emLrrpFWT8dCoj5BJb12-5QMG2-nruUw [following]\n",
+            "--2022-04-04 10:22:22--  https://drive.google.com/uc?export=download&id=1emLrrpFWT8dCoj5BJb12-5QMG2-nruUw\n",
+            "Resolving drive.google.com (drive.google.com)... 172.217.214.138, 172.217.214.102, 172.217.214.113, ...\n",
+            "Connecting to drive.google.com (drive.google.com)|172.217.214.138|:443... connected.\n",
+            "HTTP request sent, awaiting response... 303 See Other\n",
+            "Location: https://doc-10-10-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/4j68lf3p1ts0mjccuhkaso6eqi444eaa/1649067675000/17946651057176172524/*/1emLrrpFWT8dCoj5BJb12-5QMG2-nruUw?e=download [following]\n",
+            "Warning: wildcards not supported in HTTP.\n",
+            "--2022-04-04 10:22:22--  https://doc-10-10-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/4j68lf3p1ts0mjccuhkaso6eqi444eaa/1649067675000/17946651057176172524/*/1emLrrpFWT8dCoj5BJb12-5QMG2-nruUw?e=download\n",
+            "Resolving doc-10-10-docs.googleusercontent.com (doc-10-10-docs.googleusercontent.com)... 142.250.125.132, 2607:f8b0:4001:c2f::84\n",
+            "Connecting to doc-10-10-docs.googleusercontent.com (doc-10-10-docs.googleusercontent.com)|142.250.125.132|:443... connected.\n",
+            "HTTP request sent, awaiting response... 200 OK\n",
+            "Length: 137694 (134K) [application/zip]\n",
+            "Saving to: ‘3i4n1QB.1’\n",
+            "\n",
+            "3i4n1QB.1           100%[===================>] 134.47K  --.-KB/s    in 0.001s  \n",
+            "\n",
+            "2022-04-04 10:22:23 (119 MB/s) - ‘3i4n1QB.1’ saved [137694/137694]\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "gMK9we3bJQpX"
+      },
+      "source": [
+        "# 라이브러리 불러오기\n",
+        "\n",
+        "import pandas as pd\n",
+        "from sklearn.preprocessing import MinMaxScaler, OneHotEncoder\n",
+        "from sklearn.ensemble import RandomForestClassifier"
+      ],
+      "execution_count": 66,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "CLf7mks6JTX0",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 324
+        },
+        "outputId": "f1fdacee-c337-4818-84f3-cbbea8c9e7d9"
+      },
+      "source": [
+        "train = pd.read_csv('data/train.csv')\n",
+        "\n",
+        "# Scailing\n",
+        "scaler = MinMaxScaler()\n",
+        "scaler.fit(train[['fixed acidity']])\n",
+        "train['Scaled fixed acidity'] = scaler.transform(train[['fixed acidity']])\n",
+        "\n",
+        "# Encoding\n",
+        "encoder = OneHotEncoder()\n",
+        "encoder.fit(train[['type']])\n",
+        "onehot = encoder.transform(train[['type']])\n",
+        "onehot = onehot.toarray()\n",
+        "onehot = pd.DataFrame(onehot)\n",
+        "onehot.columns = encoder.get_feature_names()\n",
+        "train = pd.concat([train, onehot], axis = 1)\n",
+        "train = train.drop(columns = ['type'])\n",
+        "train.head()"
+      ],
+      "execution_count": 27,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/usr/local/lib/python3.7/dist-packages/sklearn/utils/deprecation.py:87: FutureWarning: Function get_feature_names is deprecated; get_feature_names is deprecated in 1.0 and will be removed in 1.2. Please use get_feature_names_out instead.\n",
+            "  warnings.warn(msg, category=FutureWarning)\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "   index  quality  fixed acidity  volatile acidity  citric acid  \\\n",
+              "0      0        5            5.6             0.695         0.06   \n",
+              "1      1        5            8.8             0.610         0.14   \n",
+              "2      2        5            7.9             0.210         0.39   \n",
+              "3      3        6            7.0             0.210         0.31   \n",
+              "4      4        6            7.8             0.400         0.26   \n",
+              "\n",
+              "   residual sugar  chlorides  free sulfur dioxide  total sulfur dioxide  \\\n",
+              "0             6.8      0.042                  9.0                  84.0   \n",
+              "1             2.4      0.067                 10.0                  42.0   \n",
+              "2             2.0      0.057                 21.0                 138.0   \n",
+              "3             6.0      0.046                 29.0                 108.0   \n",
+              "4             9.5      0.059                 32.0                 178.0   \n",
+              "\n",
+              "   density    pH  sulphates  alcohol  Scaled fixed acidity  x0_red  x0_white  \n",
+              "0  0.99432  3.44       0.44     10.2              0.148760     0.0       1.0  \n",
+              "1  0.99690  3.19       0.59      9.5              0.413223     1.0       0.0  \n",
+              "2  0.99176  3.05       0.52     10.9              0.338843     0.0       1.0  \n",
+              "3  0.99390  3.26       0.50     10.8              0.264463     0.0       1.0  \n",
+              "4  0.99550  3.04       0.43     10.9              0.330579     0.0       1.0  "
+            ],
+            "text/html": [
+              "\n",
+              "  <div id=\"df-8c5dce32-c87d-4f7e-b37e-478fc092562d\">\n",
+              "    <div class=\"colab-df-container\">\n",
+              "      <div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>index</th>\n",
+              "      <th>quality</th>\n",
+              "      <th>fixed acidity</th>\n",
+              "      <th>volatile acidity</th>\n",
+              "      <th>citric acid</th>\n",
+              "      <th>residual sugar</th>\n",
+              "      <th>chlorides</th>\n",
+              "      <th>free sulfur dioxide</th>\n",
+              "      <th>total sulfur dioxide</th>\n",
+              "      <th>density</th>\n",
+              "      <th>pH</th>\n",
+              "      <th>sulphates</th>\n",
+              "      <th>alcohol</th>\n",
+              "      <th>Scaled fixed acidity</th>\n",
+              "      <th>x0_red</th>\n",
+              "      <th>x0_white</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>0</td>\n",
+              "      <td>5</td>\n",
+              "      <td>5.6</td>\n",
+              "      <td>0.695</td>\n",
+              "      <td>0.06</td>\n",
+              "      <td>6.8</td>\n",
+              "      <td>0.042</td>\n",
+              "      <td>9.0</td>\n",
+              "      <td>84.0</td>\n",
+              "      <td>0.99432</td>\n",
+              "      <td>3.44</td>\n",
+              "      <td>0.44</td>\n",
+              "      <td>10.2</td>\n",
+              "      <td>0.148760</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>1</td>\n",
+              "      <td>5</td>\n",
+              "      <td>8.8</td>\n",
+              "      <td>0.610</td>\n",
+              "      <td>0.14</td>\n",
+              "      <td>2.4</td>\n",
+              "      <td>0.067</td>\n",
+              "      <td>10.0</td>\n",
+              "      <td>42.0</td>\n",
+              "      <td>0.99690</td>\n",
+              "      <td>3.19</td>\n",
+              "      <td>0.59</td>\n",
+              "      <td>9.5</td>\n",
+              "      <td>0.413223</td>\n",
+              "      <td>1.0</td>\n",
+              "      <td>0.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>2</td>\n",
+              "      <td>5</td>\n",
+              "      <td>7.9</td>\n",
+              "      <td>0.210</td>\n",
+              "      <td>0.39</td>\n",
+              "      <td>2.0</td>\n",
+              "      <td>0.057</td>\n",
+              "      <td>21.0</td>\n",
+              "      <td>138.0</td>\n",
+              "      <td>0.99176</td>\n",
+              "      <td>3.05</td>\n",
+              "      <td>0.52</td>\n",
+              "      <td>10.9</td>\n",
+              "      <td>0.338843</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>3</td>\n",
+              "      <td>6</td>\n",
+              "      <td>7.0</td>\n",
+              "      <td>0.210</td>\n",
+              "      <td>0.31</td>\n",
+              "      <td>6.0</td>\n",
+              "      <td>0.046</td>\n",
+              "      <td>29.0</td>\n",
+              "      <td>108.0</td>\n",
+              "      <td>0.99390</td>\n",
+              "      <td>3.26</td>\n",
+              "      <td>0.50</td>\n",
+              "      <td>10.8</td>\n",
+              "      <td>0.264463</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1.0</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>4</td>\n",
+              "      <td>6</td>\n",
+              "      <td>7.8</td>\n",
+              "      <td>0.400</td>\n",
+              "      <td>0.26</td>\n",
+              "      <td>9.5</td>\n",
+              "      <td>0.059</td>\n",
+              "      <td>32.0</td>\n",
+              "      <td>178.0</td>\n",
+              "      <td>0.99550</td>\n",
+              "      <td>3.04</td>\n",
+              "      <td>0.43</td>\n",
+              "      <td>10.9</td>\n",
+              "      <td>0.330579</td>\n",
+              "      <td>0.0</td>\n",
+              "      <td>1.0</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>\n",
+              "      <button class=\"colab-df-convert\" onclick=\"convertToInteractive('df-8c5dce32-c87d-4f7e-b37e-478fc092562d')\"\n",
+              "              title=\"Convert this dataframe to an interactive table.\"\n",
+              "              style=\"display:none;\">\n",
+              "        \n",
+              "  <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24px\"viewBox=\"0 0 24 24\"\n",
+              "       width=\"24px\">\n",
+              "    <path d=\"M0 0h24v24H0V0z\" fill=\"none\"/>\n",
+              "    <path d=\"M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z\"/><path d=\"M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z\"/>\n",
+              "  </svg>\n",
+              "      </button>\n",
+              "      \n",
+              "  <style>\n",
+              "    .colab-df-container {\n",
+              "      display:flex;\n",
+              "      flex-wrap:wrap;\n",
+              "      gap: 12px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert {\n",
+              "      background-color: #E8F0FE;\n",
+              "      border: none;\n",
+              "      border-radius: 50%;\n",
+              "      cursor: pointer;\n",
+              "      display: none;\n",
+              "      fill: #1967D2;\n",
+              "      height: 32px;\n",
+              "      padding: 0 0 0 0;\n",
+              "      width: 32px;\n",
+              "    }\n",
+              "\n",
+              "    .colab-df-convert:hover {\n",
+              "      background-color: #E2EBFA;\n",
+              "      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);\n",
+              "      fill: #174EA6;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert {\n",
+              "      background-color: #3B4455;\n",
+              "      fill: #D2E3FC;\n",
+              "    }\n",
+              "\n",
+              "    [theme=dark] .colab-df-convert:hover {\n",
+              "      background-color: #434B5C;\n",
+              "      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);\n",
+              "      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));\n",
+              "      fill: #FFFFFF;\n",
+              "    }\n",
+              "  </style>\n",
+              "\n",
+              "      <script>\n",
+              "        const buttonEl =\n",
+              "          document.querySelector('#df-8c5dce32-c87d-4f7e-b37e-478fc092562d button.colab-df-convert');\n",
+              "        buttonEl.style.display =\n",
+              "          google.colab.kernel.accessAllowed ? 'block' : 'none';\n",
+              "\n",
+              "        async function convertToInteractive(key) {\n",
+              "          const element = document.querySelector('#df-8c5dce32-c87d-4f7e-b37e-478fc092562d');\n",
+              "          const dataTable =\n",
+              "            await google.colab.kernel.invokeFunction('convertToInteractive',\n",
+              "                                                     [key], {});\n",
+              "          if (!dataTable) return;\n",
+              "\n",
+              "          const docLinkHtml = 'Like what you see? Visit the ' +\n",
+              "            '<a target=\"_blank\" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'\n",
+              "            + ' to learn more about interactive tables.';\n",
+              "          element.innerHTML = '';\n",
+              "          dataTable['output_type'] = 'display_data';\n",
+              "          await google.colab.output.renderOutput(dataTable, element);\n",
+              "          const docLink = document.createElement('div');\n",
+              "          docLink.innerHTML = docLinkHtml;\n",
+              "          element.appendChild(docLink);\n",
+              "        }\n",
+              "      </script>\n",
+              "    </div>\n",
+              "  </div>\n",
+              "  "
+            ]
+          },
+          "metadata": {},
+          "execution_count": 27
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "VIt03PA6J0dh"
+      },
+      "source": [
+        "5. sklearn에 model_selection 부분 속 KFold를 불러와보세요"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "wwBMhwuuJV7A"
+      },
+      "source": [
+        "from sklearn.model_selection import KFold"
+      ],
+      "execution_count": 67,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Pwyd6UpCJ6fN"
+      },
+      "source": [
+        "6. KFold에 n_splits = 5, shuffle = True, random_state = 0이라는 인자를 추가해 \"kf\"라는 변수에 저장해보세요"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nGFgARMpJ9aL"
+      },
+      "source": [
+        "kf = KFold(n_splits=5, shuffle = True, random_state = 0)"
+      ],
+      "execution_count": 68,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "nToxKqtxKEBS"
+      },
+      "source": [
+        "7. 반복문을 통해서 1번부터 5번까지의 데이터에 접근해보세요 (추가문제입니다. 꼭 풀 필요는 없되 답지를 참고해주세요.)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "mRHc7n0sKBuK",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "0157b708-38ec-4753-af37-a6fede895d4b"
+      },
+      "source": [
+        "n_iter=0\n",
+        "for train_index, test_index in kf.split(train):\n",
+        "    train_set = train.iloc[train_index]\n",
+        "    test_set = train.iloc[test_index]\n",
+        "    n_iter += 1\n",
+        "    print(\"#{0}번 교차검증 train 데이터: {1}\".format(n_iter,train_set))\n",
+        "    print(\"#{0}번 교차검증 test 데이터: {1}\".format(n_iter,test_set))"
+      ],
+      "execution_count": 69,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "#1번 교차검증 train 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "0        3    20                  16.3                     1.0   \n",
+            "2        7     6                  13.9                     0.0   \n",
+            "3        8    23                   8.1                     0.0   \n",
+            "4        9    18                  29.5                     0.0   \n",
+            "6       14     3                  10.6                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1454  2174     4                  16.8                     0.0   \n",
+            "1455  2175     3                  10.8                     0.0   \n",
+            "1456  2176     5                  18.3                     0.0   \n",
+            "1457  2178    21                  20.7                     0.0   \n",
+            "1458  2179    17                  21.1                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "0                    1.5               89.0                576.0   \n",
+            "2                    0.7               79.0               1382.0   \n",
+            "3                    2.7               54.0                946.0   \n",
+            "4                    4.8                7.0               2000.0   \n",
+            "6                    1.5               58.0               1548.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1454                 1.6               53.0               2000.0   \n",
+            "1455                 3.8               45.0               2000.0   \n",
+            "1456                 1.9               54.0               2000.0   \n",
+            "1457                 3.7               37.0               1395.0   \n",
+            "1458                 3.1               47.0               1973.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "0              0.027           76.0            33.0   49.0  \n",
+            "2              0.033           32.0            19.0   26.0  \n",
+            "3              0.040           75.0            64.0   57.0  \n",
+            "4              0.057           27.0            11.0  431.0  \n",
+            "6              0.038           62.0            33.0   23.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1454           0.031           37.0            27.0   21.0  \n",
+            "1455           0.039           34.0            19.0   20.0  \n",
+            "1456           0.009           30.0            21.0   22.0  \n",
+            "1457           0.082           71.0            36.0  216.0  \n",
+            "1458           0.046           38.0            17.0  170.0  \n",
+            "\n",
+            "[1062 rows x 11 columns]\n",
+            "#1번 교차검증 test 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "1        6    13                  20.1                     0.0   \n",
+            "5       13     2                  13.6                     0.0   \n",
+            "8       19     9                  13.8                     0.0   \n",
+            "9       20    14                  17.2                     0.0   \n",
+            "15      29    13                  14.0                     1.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1422  2130     5                  15.7                     0.0   \n",
+            "1428  2139    21                  12.5                     0.0   \n",
+            "1437  2155     0                  12.3                     0.0   \n",
+            "1449  2169     4                  10.2                     0.0   \n",
+            "1452  2172     4                   8.7                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "1                    1.4               48.0                916.0   \n",
+            "5                    1.7               80.0               1073.0   \n",
+            "8                    1.9               64.0               1344.0   \n",
+            "9                    2.1               32.0               1571.0   \n",
+            "15                   2.8               42.0               1518.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1422                 1.2               63.0                688.0   \n",
+            "1428                 4.0               73.0               1264.0   \n",
+            "1437                 3.7               35.0               2000.0   \n",
+            "1449                 1.3               63.0               1378.0   \n",
+            "1452                 1.0               66.0               1802.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "1              0.042           73.0            40.0  159.0  \n",
+            "5              0.027           34.0            15.0   39.0  \n",
+            "8              0.039           93.0            19.0   39.0  \n",
+            "9              0.025           64.0            19.0   83.0  \n",
+            "15             0.030           49.0            37.0    5.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1422           0.026          118.0            74.0    7.0  \n",
+            "1428           0.051           57.0            27.0   91.0  \n",
+            "1437           0.037           34.0            17.0   66.0  \n",
+            "1449           0.033           58.0            29.0   11.0  \n",
+            "1452           0.044           46.0            18.0    8.0  \n",
+            "\n",
+            "[266 rows x 11 columns]\n",
+            "#2번 교차검증 train 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "0        3    20                  16.3                     1.0   \n",
+            "1        6    13                  20.1                     0.0   \n",
+            "3        8    23                   8.1                     0.0   \n",
+            "4        9    18                  29.5                     0.0   \n",
+            "5       13     2                  13.6                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1452  2172     4                   8.7                     0.0   \n",
+            "1453  2173    18                  24.8                     0.0   \n",
+            "1454  2174     4                  16.8                     0.0   \n",
+            "1456  2176     5                  18.3                     0.0   \n",
+            "1457  2178    21                  20.7                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "0                    1.5               89.0                576.0   \n",
+            "1                    1.4               48.0                916.0   \n",
+            "3                    2.7               54.0                946.0   \n",
+            "4                    4.8                7.0               2000.0   \n",
+            "5                    1.7               80.0               1073.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1452                 1.0               66.0               1802.0   \n",
+            "1453                 3.6               33.0               1262.0   \n",
+            "1454                 1.6               53.0               2000.0   \n",
+            "1456                 1.9               54.0               2000.0   \n",
+            "1457                 3.7               37.0               1395.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "0              0.027           76.0            33.0   49.0  \n",
+            "1              0.042           73.0            40.0  159.0  \n",
+            "3              0.040           75.0            64.0   57.0  \n",
+            "4              0.057           27.0            11.0  431.0  \n",
+            "5              0.027           34.0            15.0   39.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1452           0.044           46.0            18.0    8.0  \n",
+            "1453           0.084          113.0            49.0  303.0  \n",
+            "1454           0.031           37.0            27.0   21.0  \n",
+            "1456           0.009           30.0            21.0   22.0  \n",
+            "1457           0.082           71.0            36.0  216.0  \n",
+            "\n",
+            "[1062 rows x 11 columns]\n",
+            "#2번 교차검증 test 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "2        7     6                  13.9                     0.0   \n",
+            "10      21     4                   5.7                     0.0   \n",
+            "16      30    21                  18.8                     0.0   \n",
+            "17      32    17                  11.5                     1.0   \n",
+            "21      36     8                  12.6                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1443  2161     2                  11.4                     1.0   \n",
+            "1445  2163    20                  21.5                     0.0   \n",
+            "1448  2168    19                  10.6                     0.0   \n",
+            "1455  2175     3                  10.8                     0.0   \n",
+            "1458  2179    17                  21.1                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "2                    0.7               79.0               1382.0   \n",
+            "10                   0.6               77.0               1960.0   \n",
+            "16                   2.2               34.0               2000.0   \n",
+            "17                   3.0               91.0                555.0   \n",
+            "21                   5.3               53.0               1576.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1443                 0.9               89.0                289.0   \n",
+            "1445                 1.0               33.0               2000.0   \n",
+            "1448                 0.8               84.0               1091.0   \n",
+            "1455                 3.8               45.0               2000.0   \n",
+            "1458                 3.1               47.0               1973.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "2              0.033           32.0            19.0   26.0  \n",
+            "10             0.028           14.0            18.0    6.0  \n",
+            "16             0.040           32.0            14.0  217.0  \n",
+            "17             0.036           29.0            21.0   64.0  \n",
+            "21             0.014           52.0            40.0  209.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1443           0.017           67.0            57.0    5.0  \n",
+            "1445           0.049           60.0            32.0  201.0  \n",
+            "1448           0.033           23.0            22.0  114.0  \n",
+            "1455           0.039           34.0            19.0   20.0  \n",
+            "1458           0.046           38.0            17.0  170.0  \n",
+            "\n",
+            "[266 rows x 11 columns]\n",
+            "#3번 교차검증 train 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "0        3    20                  16.3                     1.0   \n",
+            "1        6    13                  20.1                     0.0   \n",
+            "2        7     6                  13.9                     0.0   \n",
+            "3        8    23                   8.1                     0.0   \n",
+            "4        9    18                  29.5                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1453  2173    18                  24.8                     0.0   \n",
+            "1454  2174     4                  16.8                     0.0   \n",
+            "1455  2175     3                  10.8                     0.0   \n",
+            "1456  2176     5                  18.3                     0.0   \n",
+            "1458  2179    17                  21.1                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "0                    1.5               89.0                576.0   \n",
+            "1                    1.4               48.0                916.0   \n",
+            "2                    0.7               79.0               1382.0   \n",
+            "3                    2.7               54.0                946.0   \n",
+            "4                    4.8                7.0               2000.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1453                 3.6               33.0               1262.0   \n",
+            "1454                 1.6               53.0               2000.0   \n",
+            "1455                 3.8               45.0               2000.0   \n",
+            "1456                 1.9               54.0               2000.0   \n",
+            "1458                 3.1               47.0               1973.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "0              0.027           76.0            33.0   49.0  \n",
+            "1              0.042           73.0            40.0  159.0  \n",
+            "2              0.033           32.0            19.0   26.0  \n",
+            "3              0.040           75.0            64.0   57.0  \n",
+            "4              0.057           27.0            11.0  431.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1453           0.084          113.0            49.0  303.0  \n",
+            "1454           0.031           37.0            27.0   21.0  \n",
+            "1455           0.039           34.0            19.0   20.0  \n",
+            "1456           0.009           30.0            21.0   22.0  \n",
+            "1458           0.046           38.0            17.0  170.0  \n",
+            "\n",
+            "[1062 rows x 11 columns]\n",
+            "#3번 교차검증 test 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "6       14     3                  10.6                     0.0   \n",
+            "12      24     9                  14.1                     0.0   \n",
+            "19      34    18                  18.0                     1.0   \n",
+            "22      37    16                  19.4                     0.0   \n",
+            "23      38    23                  15.4                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1444  2162    23                  14.5                     0.0   \n",
+            "1446  2164     2                   9.2                     0.0   \n",
+            "1450  2170    15                  23.1                     0.0   \n",
+            "1451  2171     3                  18.1                     0.0   \n",
+            "1457  2178    21                  20.7                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "6                    1.5               58.0               1548.0   \n",
+            "12                   3.2               59.0               1808.0   \n",
+            "19                   1.9               82.0                685.0   \n",
+            "22                   5.9               21.0               2000.0   \n",
+            "23                   1.4               87.0                423.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1444                 1.8               68.0               1794.0   \n",
+            "1446                 0.4               62.0               1882.0   \n",
+            "1450                 4.3               23.0               1798.0   \n",
+            "1451                 0.8               77.0                272.0   \n",
+            "1457                 3.7               37.0               1395.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "6              0.038           62.0            33.0   23.0  \n",
+            "12             0.028           52.0            18.0   59.0  \n",
+            "19             0.044           99.0            42.0   15.0  \n",
+            "22             0.052           52.0            14.0  122.0  \n",
+            "23             0.019           85.0            35.0   87.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1444           0.034           43.0            20.0  119.0  \n",
+            "1446           0.040           49.0            18.0   24.0  \n",
+            "1450           0.064           54.0            29.0  266.0  \n",
+            "1451           0.008          112.0            69.0   26.0  \n",
+            "1457           0.082           71.0            36.0  216.0  \n",
+            "\n",
+            "[266 rows x 11 columns]\n",
+            "#4번 교차검증 train 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "1        6    13                  20.1                     0.0   \n",
+            "2        7     6                  13.9                     0.0   \n",
+            "5       13     2                  13.6                     0.0   \n",
+            "6       14     3                  10.6                     0.0   \n",
+            "8       19     9                  13.8                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1454  2174     4                  16.8                     0.0   \n",
+            "1455  2175     3                  10.8                     0.0   \n",
+            "1456  2176     5                  18.3                     0.0   \n",
+            "1457  2178    21                  20.7                     0.0   \n",
+            "1458  2179    17                  21.1                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "1                    1.4               48.0                916.0   \n",
+            "2                    0.7               79.0               1382.0   \n",
+            "5                    1.7               80.0               1073.0   \n",
+            "6                    1.5               58.0               1548.0   \n",
+            "8                    1.9               64.0               1344.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1454                 1.6               53.0               2000.0   \n",
+            "1455                 3.8               45.0               2000.0   \n",
+            "1456                 1.9               54.0               2000.0   \n",
+            "1457                 3.7               37.0               1395.0   \n",
+            "1458                 3.1               47.0               1973.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "1              0.042           73.0            40.0  159.0  \n",
+            "2              0.033           32.0            19.0   26.0  \n",
+            "5              0.027           34.0            15.0   39.0  \n",
+            "6              0.038           62.0            33.0   23.0  \n",
+            "8              0.039           93.0            19.0   39.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1454           0.031           37.0            27.0   21.0  \n",
+            "1455           0.039           34.0            19.0   20.0  \n",
+            "1456           0.009           30.0            21.0   22.0  \n",
+            "1457           0.082           71.0            36.0  216.0  \n",
+            "1458           0.046           38.0            17.0  170.0  \n",
+            "\n",
+            "[1063 rows x 11 columns]\n",
+            "#4번 교차검증 test 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "0        3    20                  16.3                     1.0   \n",
+            "3        8    23                   8.1                     0.0   \n",
+            "4        9    18                  29.5                     0.0   \n",
+            "7       16    21                  16.0                     0.0   \n",
+            "13      27    10                   9.2                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1415  2121     8                   8.6                     0.0   \n",
+            "1424  2132     0                  18.8                     0.0   \n",
+            "1438  2156    15                  20.2                     0.0   \n",
+            "1440  2158    23                  18.2                     0.0   \n",
+            "1453  2173    18                  24.8                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "0                    1.5               89.0                576.0   \n",
+            "3                    2.7               54.0                946.0   \n",
+            "4                    4.8                7.0               2000.0   \n",
+            "7                    6.0               21.0               1961.0   \n",
+            "13                   1.9               55.0                462.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1415                 2.0               89.0                223.0   \n",
+            "1424                 2.5               51.0               1638.0   \n",
+            "1438                 3.8               75.0                547.0   \n",
+            "1440                 1.3               70.0                738.0   \n",
+            "1453                 3.6               33.0               1262.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "0              0.027           76.0            33.0   49.0  \n",
+            "3              0.040           75.0            64.0   57.0  \n",
+            "4              0.057           27.0            11.0  431.0  \n",
+            "7              0.050           90.0            28.0  146.0  \n",
+            "13             0.023           91.0            84.0   60.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1415           0.010           74.0            64.0   34.0  \n",
+            "1424           0.051           51.0            35.0  106.0  \n",
+            "1438           0.039           65.0            43.0  105.0  \n",
+            "1440           0.036           58.0            34.0  141.0  \n",
+            "1453           0.084          113.0            49.0  303.0  \n",
+            "\n",
+            "[265 rows x 11 columns]\n",
+            "#5번 교차검증 train 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "0        3    20                  16.3                     1.0   \n",
+            "1        6    13                  20.1                     0.0   \n",
+            "2        7     6                  13.9                     0.0   \n",
+            "3        8    23                   8.1                     0.0   \n",
+            "4        9    18                  29.5                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1452  2172     4                   8.7                     0.0   \n",
+            "1453  2173    18                  24.8                     0.0   \n",
+            "1455  2175     3                  10.8                     0.0   \n",
+            "1457  2178    21                  20.7                     0.0   \n",
+            "1458  2179    17                  21.1                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "0                    1.5               89.0                576.0   \n",
+            "1                    1.4               48.0                916.0   \n",
+            "2                    0.7               79.0               1382.0   \n",
+            "3                    2.7               54.0                946.0   \n",
+            "4                    4.8                7.0               2000.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1452                 1.0               66.0               1802.0   \n",
+            "1453                 3.6               33.0               1262.0   \n",
+            "1455                 3.8               45.0               2000.0   \n",
+            "1457                 3.7               37.0               1395.0   \n",
+            "1458                 3.1               47.0               1973.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "0              0.027           76.0            33.0   49.0  \n",
+            "1              0.042           73.0            40.0  159.0  \n",
+            "2              0.033           32.0            19.0   26.0  \n",
+            "3              0.040           75.0            64.0   57.0  \n",
+            "4              0.057           27.0            11.0  431.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1452           0.044           46.0            18.0    8.0  \n",
+            "1453           0.084          113.0            49.0  303.0  \n",
+            "1455           0.039           34.0            19.0   20.0  \n",
+            "1457           0.082           71.0            36.0  216.0  \n",
+            "1458           0.046           38.0            17.0  170.0  \n",
+            "\n",
+            "[1063 rows x 11 columns]\n",
+            "#5번 교차검증 test 데이터:         id  hour  hour_bef_temperature  hour_bef_precipitation  \\\n",
+            "11      22    10                  15.4                     0.0   \n",
+            "25      45     0                  11.7                     0.0   \n",
+            "26      46     2                  13.0                     0.0   \n",
+            "27      47     7                  10.9                     0.0   \n",
+            "30      50    10                  16.8                     0.0   \n",
+            "...    ...   ...                   ...                     ...   \n",
+            "1436  2154    18                  20.3                     0.0   \n",
+            "1439  2157    14                  28.4                     0.0   \n",
+            "1447  2167    15                  26.3                     0.0   \n",
+            "1454  2174     4                  16.8                     0.0   \n",
+            "1456  2176     5                  18.3                     0.0   \n",
+            "\n",
+            "      hour_bef_windspeed  hour_bef_humidity  hour_bef_visibility  \\\n",
+            "11                   2.7               62.0               1362.0   \n",
+            "25                   3.5               80.0                895.0   \n",
+            "26                   0.5               48.0               1992.0   \n",
+            "27                   0.8               77.0               1092.0   \n",
+            "30                   1.8               62.0                955.0   \n",
+            "...                  ...                ...                  ...   \n",
+            "1436                 4.7               25.0               1994.0   \n",
+            "1439                 1.9               20.0               1346.0   \n",
+            "1447                 4.3               39.0               1925.0   \n",
+            "1454                 1.6               53.0               2000.0   \n",
+            "1456                 1.9               54.0               2000.0   \n",
+            "\n",
+            "      hour_bef_ozone  hour_bef_pm10  hour_bef_pm2.5  count  \n",
+            "11             0.039           99.0            21.0   42.0  \n",
+            "25             0.044           58.0            31.0   34.0  \n",
+            "26             0.043           73.0            26.0   29.0  \n",
+            "27             0.035           79.0            17.0   18.0  \n",
+            "30             0.016           55.0            23.0   81.0  \n",
+            "...              ...            ...             ...    ...  \n",
+            "1436           0.053           43.0            20.0  242.0  \n",
+            "1439           0.082           78.0            38.0  179.0  \n",
+            "1447           0.062           37.0            23.0  272.0  \n",
+            "1454           0.031           37.0            27.0   21.0  \n",
+            "1456           0.009           30.0            21.0   22.0  \n",
+            "\n",
+            "[265 rows x 11 columns]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        ""
+      ],
+      "metadata": {
+        "id": "kZsXFc1XFXsI"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
